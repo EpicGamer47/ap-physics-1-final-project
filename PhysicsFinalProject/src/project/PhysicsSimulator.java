@@ -6,7 +6,8 @@ import static processing.core.PApplet.*;
 import static processing.core.PConstants.CENTER;
 
 public class PhysicsSimulator {
-	public static final float ss = 0.85f; // screenScale, i fucking hate macbooks
+	public static final float ss = 0.85f; 
+	// screenScale, use to scale down the screen as neccessary
 
 	public static final float g = 9.8f * 100;
 	private static final float rampWidth = 1000;

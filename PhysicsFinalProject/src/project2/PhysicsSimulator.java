@@ -9,17 +9,14 @@ public class PhysicsSimulator {
 	public static final float ss = 1f; 
 	// screenScale, use to scale down the screen as neccessary
 
-	private static final float rampWidth = 1000;
 //	public static final DecimalFormat dfFriction = new DecimalFormat("0.00");
-	public static final DecimalFormat dfVelocity = new DecimalFormat("0.0");
+	public static final DecimalFormat dfVelocity = new DecimalFormat("0.00");
 	private PApplet parent;
 
 	private Button plusM, minusM, plusH, minusH, plusA, minusA; // buttons to change friction & angle
 	private Button start;
 
-	private float fallHeight;
 	private FallingObject obj;
-
 	private boolean objectIsFalling;
 
 	public PhysicsSimulator(PApplet parent) {
@@ -51,7 +48,7 @@ public class PhysicsSimulator {
 		obj.draw();
 
 		if (objectIsFalling) {
-			obj.update();
+			objectIsFalling = obj.update();
 		}
 	}
 

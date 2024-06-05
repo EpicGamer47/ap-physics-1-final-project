@@ -14,7 +14,7 @@ public class FallingObject {
 	public double p; // position
 	public double v; // velocity
 	
-	public int h; // height
+	public double h; // height
 	public double m; // mass
 	public double a; // area
 	
@@ -23,19 +23,19 @@ public class FallingObject {
 	}
 	
 	public void draw() {
-		final float xC = 200 * ss, sY = 100 * ss, bY = 800 * ss;
 		final float r = 10 * ss * (float) Math.sqrt(a);
+		final float xC = 200 * ss, sY = 100 * ss, bY = 800 * ss;
 		parent.rectMode(PApplet.CORNERS);
 		parent.ellipseMode(PApplet.CORNERS);
 		parent.fill(obj.color);
 		
-		float yC = sY + (float) (p / h) * (bY - sY);
+		float yC = sY + (float) (p / h) * (bY - sY) - r;
 		float x1 = xC - r, x2 = xC + r;
 		float y1 = yC - r, y2 = yC + r;
 		
 		switch (obj) {
 		case ARROW:
-			parent.line(xC, y1, xC, y2);
+			parent.rect(xC - 1, y1, xC + 1, y2);
 			break;
 		case CONE:
 			parent.triangle(xC, y2, x1, y1, x2, y1);
@@ -44,12 +44,13 @@ public class FallingObject {
 			parent.rect(x1, y1, x2, y2);
 			break;
 		case DIAMOND:
-			parent.rect(xC, y1, x1, yC, xC, y2, x2, yC);
+			parent.quad(xC, y1, x1, yC, xC, y2, x2, yC);
 			break;
 		case HALF_SPHERE:
 			parent.arc(x1, y1, x2, y2, 0, PApplet.PI, PApplet.PIE);
+			break;
 		case SHEET:
-			parent.line(x1, yC, x2, yC);
+			parent.rect(x1, yC + r - 2, x2, yC + r);
 			break;
 		case SPHERE:
 			parent.ellipse(x1, y1, x2, y2);

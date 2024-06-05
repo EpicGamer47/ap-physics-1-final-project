@@ -1,4 +1,4 @@
-package project;
+package project2;
 
 import static project.PhysicsSimulator.ss;
 
@@ -14,7 +14,7 @@ public class MainRunner extends PApplet {
 	
 	@Override
 	public void settings() {
-		size((int) (1600 * ss), (int) (900 * ss));
+		size((int)(1600 * ss), (int)(900 * ss));
 	}
 
 	@Override

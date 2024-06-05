@@ -29,7 +29,7 @@ public class FallingObject {
 		parent.ellipseMode(PApplet.CORNERS);
 		parent.fill(obj.color);
 		
-		float yC = sY + (float) (h - p) * (bY - sY);
+		float yC = sY + (float) (p / h) * (bY - sY);
 		float x1 = xC - r, x2 = xC + r;
 		float y1 = yC - r, y2 = yC + r;
 		

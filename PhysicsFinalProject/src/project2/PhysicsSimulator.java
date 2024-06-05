@@ -6,30 +6,40 @@ import static processing.core.PApplet.*;
 import static processing.core.PConstants.CENTER;
 
 public class PhysicsSimulator {
-	public static final float ss = 0.85f; 
+	public static final float ss = 1f; 
 	// screenScale, use to scale down the screen as neccessary
 
 	private static final float rampWidth = 1000;
-	public static final DecimalFormat dfFriction = new DecimalFormat("0.00");
+//	public static final DecimalFormat dfFriction = new DecimalFormat("0.00");
 	public static final DecimalFormat dfVelocity = new DecimalFormat("0.0");
 	private PApplet parent;
 
-	private Button plusMu, minusMu, plusTheta, minusTheta; // buttons to change friction & angle
+	private Button plusM, minusM, plusH, minusH, plusA, minusA; // buttons to change friction & angle
 	private Button start;
 
 	private float fallHeight;
-	private FallingObject object;
+	private FallingObject obj;
+
+	private boolean objectIsFalling;
 
 	public PhysicsSimulator(PApplet parent) {
 		this.parent = parent;
 
-		minusMu = new Button(parent, 1220, 400, 1380, 450, "-");
-		plusMu = new Button(parent, 1420, 400, 1580, 450, "+");
-		minusTheta = new Button(parent, 1220, 500, 1380, 550, "-");
-		plusTheta = new Button(parent, 1420, 500, 1580, 550, "+");
-		start = new Button(parent, 1220, 600, 1580, 650, "Start/Stop");
+		minusM = new Button(parent, 1220, 400, 1380, 450, "-");
+		plusM = new Button(parent, 1420, 400, 1580, 450, "+");
+		minusH = new Button(parent, 1220, 500, 1380, 550, "-");
+		plusH = new Button(parent, 1420, 500, 1580, 550, "+");
+		minusA = new Button(parent, 1220, 600, 1380, 650, "-");
+		plusA = new Button(parent, 1420, 600, 1580, 650, "+");
+		start = new Button(parent, 1220, 700, 1580, 750, "Start/Stop");
 
-		object = new FallingObject(parent);
+		obj = new FallingObject(parent);
+		obj.obj = ObjectData.DIAMOND;
+		obj.h = 50;
+		obj.m = 20;
+		obj.a = 6;
+		
+		objectIsFalling = false;
 	}
 
 	public void draw() {
@@ -38,10 +48,10 @@ public class PhysicsSimulator {
 		drawButtons();
 
 		drawRamp();
-		drawObject();
+		obj.draw();
 
 		if (objectIsFalling) {
-			updateBlockPos();
+			obj.update();
 		}
 	}
 
@@ -65,116 +75,69 @@ public class PhysicsSimulator {
 				1220 * ss, 20 * ss, 1580 * ss, 880 * ss);
 
 		parent.textAlign(CENTER);
-		parent.text("Friction: " + dfFriction.format(mu), 1220 * ss, 360 * ss, 1580 * ss, 400 * ss);
-		parent.text("Angle: " + theta, 1220 * ss, 460 * ss, 1580 * ss, 500 * ss);
+		parent.text("Mass: " + obj.m, 1220 * ss, 360 * ss, 1580 * ss, 400 * ss);
+		parent.text("Height: " + obj.h, 1220 * ss, 460 * ss, 1580 * ss, 500 * ss);
+		parent.text("Area: " + obj.a, 1220 * ss, 560 * ss, 1580 * ss, 600 * ss);
 
 		parent.textAlign(LEFT);
 		parent.textSize(60);
-		parent.text(object.getName(), 30 * ss, 870 * ss);
-
-		parent.textSize(40);
-		parent.textAlign(RIGHT);
-		parent.text("Ramp width: 10m", 1170 * ss, 870 * ss);
+		parent.text(obj.obj.toString(), 30 * ss, 870 * ss);
 
 		parent.textLeading(70 * ss);
 		parent.textAlign(CENTER, CENTER);
-		parent.text("Velocity\n" + dfVelocity.format(objectV / 100) + "m/s", 1400 * ss, 810 * ss);
+		parent.text("Velocity\n" + dfVelocity.format(obj.v) + "m/s", 1400 * ss, 810 * ss);
 	}
 
 	private void drawButtons() {
-		plusMu.draw();
-		minusMu.draw();
-		plusTheta.draw();
-		minusTheta.draw();
+		plusM.draw();
+		minusM.draw();
+		plusH.draw();
+		minusH.draw();
+		plusA.draw();
+		minusA.draw();
 		start.draw();
 	}
 
 	private void drawRamp() {
-		parent.fill(0xaa, 0xaa, 0xaa);
-		parent.triangle(100 * ss, 800 * ss, 
-				(100 + (float) rampWidth) * ss, 800 * ss, 
-				100 * ss, (800 - (float) rampHeight) * ss);
+		//TODO
 	}
 
 	private void drawObject() {
-		final float size = 50 * ss, 
-				cos = (float) Math.cos(Math.toRadians(theta)),
-				sin = (float) Math.sin(Math.toRadians(theta));
-
-		float z = (100 + rampWidth); // cleans up stuff
-		float mX = z - rampWidth / cos + objectX, mY = 800;
-		parent.fill(objectColor);
-
-		if (object.isRolling()) {
-			float x = mX, y = mY - size / 2; // get center
-
-			float xN = (x - z) * cos - (y - mY) * sin + z, 
-					yN = (y - mY) * cos + (x - z) * sin + mY; // rotate
-
-			parent.ellipse(xN * ss, yN * ss, size * ss, size * ss);
-		} 
-		else {
-			float[] x = new float[4], y = new float[4];
-			for (int i = 0; i < 4; i++) { // make square
-				x[i] = mX - size * (i / 2);
-				y[i] = mY - size * (i % 2);
-			}
-
-			float[] xN = new float[4], yN = new float[4];
-			for (int i = 0; i < 4; i++) { // rotate all points
-				xN[i] = (x[i] - z) * cos - (y[i] - mY) * sin + z;
-				yN[i] = (y[i] - mY) * cos + (x[i] - z) * sin + mY;
-				xN[i] *= ss;
-				yN[i] *= ss;
-			}
-
-			parent.quad(xN[0], yN[0], xN[1], yN[1], xN[3], yN[3], xN[2], yN[2]);
-		}
+		obj.draw();
 	}
 
 	public void mouseClicked(int mouseX, int mouseY) {
 		if (start.wasClicked(mouseX, mouseY)) {
-			objectX = 0;
-			objectV = 0;
+			obj.reset();
 			objectIsFalling = !objectIsFalling;
 		}
 
 		if (objectIsFalling)
 			return;
 
-		if (minusMu.wasClicked(mouseX, mouseY)) {
-			mu = Math.max(0, mu - 0.05f);
+		if (minusM.wasClicked(mouseX, mouseY)) {
+			obj.m = Math.max(5, obj.m - 5);
 		} 
-		else if (plusMu.wasClicked(mouseX, mouseY)) {
-			mu = Math.min(1, mu + 0.05f);
+		else if (plusM.wasClicked(mouseX, mouseY)) {
+			obj.m = Math.min(50, obj.m + 5);
 		} 
-		else if (minusTheta.wasClicked(mouseX, mouseY)) {
-			theta = Math.max(5, theta - 5);
-			updateRamp();
+		else if (minusH.wasClicked(mouseX, mouseY)) {
+			obj.h = Math.max(10, obj.h - 10);
 		} 
-		else if (plusTheta.wasClicked(mouseX, mouseY)) {
-			theta = Math.min(85, theta + 5);
-			updateRamp();
+		else if (plusH.wasClicked(mouseX, mouseY)) {
+			obj.h = Math.min(200, obj.h + 10);
+		}
+		else if (minusA.wasClicked(mouseX, mouseY)) {
+			obj.a = Math.max(2, obj.a - 2);
+		}
+		else if (plusA.wasClicked(mouseX, mouseY)) {
+			obj.a = Math.min(20, obj.a + 2);
 		}
 	}
 
 	public void keyPressed(char key) {
 		if (key >= '1' && key <= '6') {
-			object = Object.values()[key - '1'];
-			objectColor = colorTable[key - '1'];
-		}
-	}
-
-	private void updateBlockPos() {
-		final float frameRate = 30;
-		
-		if (rampSlant > objectX) {
-			objectV += object.getAcceleration(mu, theta) / frameRate;
-			objectX += objectV / frameRate;
-		} 
-		else {
-			objectX = rampSlant;
-			objectIsFalling = false;
+			obj.obj = ObjectData.values()[key - '1'];
 		}
 	}
 }

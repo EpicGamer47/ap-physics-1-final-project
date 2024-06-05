@@ -18,4 +18,8 @@ public enum ObjectData {
 		this.name = name;
 		this.color = color;
 	}
+	
+	public String toString() {
+		return name;
+	}
 }

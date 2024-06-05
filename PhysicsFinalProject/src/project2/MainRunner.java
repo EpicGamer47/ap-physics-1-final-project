@@ -1,6 +1,6 @@
 package project2;
 
-import static project.PhysicsSimulator.ss;
+import static project2.PhysicsSimulator.ss;
 
 import processing.core.PApplet;
 
@@ -9,7 +9,7 @@ public class MainRunner extends PApplet {
 	private PhysicsSimulator sr;
 	
 	public static void main(String[] args) {
-		PApplet.main("project.MainRunner");
+		PApplet.main("project2.MainRunner");
 	}
 	
 	@Override

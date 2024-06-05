@@ -2,7 +2,7 @@ package project2;
 
 import processing.core.PApplet;
 import static processing.core.PApplet.*;
-import static project.PhysicsSimulator.ss;
+import static project2.PhysicsSimulator.ss;
 
 public class Button {
 	private PApplet parent;

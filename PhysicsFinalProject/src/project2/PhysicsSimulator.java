@@ -14,7 +14,7 @@ public class PhysicsSimulator {
 	public static final DecimalFormat dfAccel = new DecimalFormat("0.00");
 	private PApplet parent;
 
-	private Button plusM, minusM, plusH, minusH, plusA, minusA; // buttons to change friction & angle
+	private Button plusM, minusM, plusH, minusH, plusA, minusA;
 	private Button start;
 
 	private FallingObject obj;
@@ -139,11 +139,18 @@ public class PhysicsSimulator {
 			obj.reset();
 		} 
 		else if (minusH.wasClicked(mouseX, mouseY)) {
-			obj.h = Math.max(10, obj.h - 10);
+			if (obj.h == Double.POSITIVE_INFINITY)
+				obj.h = 200;
+			else
+				obj.h = Math.max(10, obj.h - 10);
 			obj.reset();
 		} 
 		else if (plusH.wasClicked(mouseX, mouseY)) {
-			obj.h = Math.min(200, obj.h + 10);
+			if (obj.h == 200)
+				obj.h = Double.POSITIVE_INFINITY;
+			else
+				obj.h = Math.min(200, obj.h + 10);
+			
 			obj.reset();
 		}
 		else if (minusA.wasClicked(mouseX, mouseY)) {

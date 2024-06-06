@@ -11,7 +11,7 @@ public class PhysicsSimulator {
 
 	public static final DecimalFormat dfVelocity = new DecimalFormat("0.000");
 	public static final DecimalFormat dfTime = new DecimalFormat("0.00");
-	public static final DecimalFormat dfAccel = new DecimalFormat("0.00");
+	public static final DecimalFormat dfAccel = new DecimalFormat("0.00000");
 	private PApplet parent;
 
 	private Button plusM, minusM, plusH, minusH, plusA, minusA;
@@ -36,8 +36,8 @@ public class PhysicsSimulator {
 		obj = new FallingObject(parent);
 		obj.obj = ObjectData.SPHERE;
 		obj.h = 50;
-		obj.m = 20;
-		obj.a = 6;
+		obj.m = 50d;
+		obj.a =  0.001;
 		
 		objectIsFalling = false;
 	}
